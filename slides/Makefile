@@ -8,7 +8,6 @@ all : $(SLIDES) $(HANDOUTS)
 
 %.md.handout.pdf : %.md
 	pandoc $^ -t beamer --slide-level 2 -V handout -o $@ 
-	mv $*.md.handout-nup.pdf $@
 		
 
 clobber : 
