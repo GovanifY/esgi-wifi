@@ -1,6 +1,6 @@
 ---
 title: Préparation a la certification OSCP
-author: \textsc{Gauvain Roussel-Tarbouriech}
+author: \textsc{Gauvain Roussel-Tarbouriech}, gauvain@govanify.com
 theme: metropolis
 ---
 
@@ -13,7 +13,7 @@ theme: metropolis
 > - La certification la plus connue d'Offensive Security (les créateurs de Kali Linux)
 > - Pas une cert "bullshit" a la CISSP, CEH 
 > - Introduit pas mal de concepts vu et revu dans le monde réel
-> - Problème
+> - Problèmes plutot actuels
 
 ## Exemples 
 
@@ -35,7 +35,7 @@ theme: metropolis
 > - Comprendre les configurations des AD et trouver les problèmes potentiels.
 > - Savoir exfiltrer des données sans laisser trop de traces.
 
-. . .
+## Objectifs - suite
 
 > - En sécurité on a 3 "principaux" domaines: l'exploit, le pentest et la défense.
 > - L'exploit c'est trouver des bugs dans des programmes, eg des CVEs.
@@ -45,7 +45,7 @@ theme: metropolis
 
 ## Modalités de notation
 
-> - Un serveur a infiltrer avec un rapport a rendre pendant les dernières heures de cours. 
+> - Un serveur a infiltrer en groupe avec un rapport a rendre pendant les dernières heures de cours. 
 
 ## Matériel nécessaire
 
@@ -92,7 +92,7 @@ donc on va devoir repartir depuis le début
 > - TRACE, renvois la ressource envoyée
 > - PATCH, pour modifier une ressource
 
-. . .
+## Verbes HTTP - Exemples
 
 Bon, tout ça c'est un peu abstrait, voici ce que ça donne dans la réalité:
 
@@ -109,7 +109,7 @@ Accept-Encoding: gzip, deflate, br
 PAYLOAD
 ```
 
-. . .
+## Verbes HTTP - Exemples réponse
 
 ```
 HTTP/2 200 OK
@@ -123,7 +123,8 @@ accept-ranges: bytes
 PAYLOAD
 ```
 
-. . .
+
+## Verbes HTTP - Nota Bene 
 
 Le protocole HTTP est un format en clair, vous pouvez envoyer vos propres
 requetes avec telnet. Attention cependant, HTTP/2 compresse vos requetes et le
@@ -179,6 +180,12 @@ commentaires vers une interface admin, certaine fois avec des données sensibles
 Il s'agit plus d'énumération, mais le fichier robots.txt a la racine d'un site
 web peux vous apprendre pas mal de choses
 
+## Outils
+
+Plusieurs outils sont préconisés pour le pentest web:
+
+> - Firefox devtools quand on a la flemme d'avoir une série d'outils complète, plutot pas mal
+> - Burp Suite ou OWASP Zap selon les préférences^[En gros c'est la meme chose que devtools mais avec un historique, du scripting, etc, c'est un proxy]
 
 ## XSS
 
@@ -200,7 +207,7 @@ Il y a 3 types de XSS:
 > - Stored, ou le serveur a stocké l'HTML dans une base de donnée et le renvois a l'utilisateur
 > - DOM, ou le javascript qui modifie votre page est vulnérable
 
-. . .
+## XSS - OSCP
 
 Dans le cadre de l'OSCP c'est un peu moins utile que d'autres techniques vu
 qu'il faut simuler la présence d'un utilisateur mais reste des bases très
@@ -216,10 +223,10 @@ sont pas sécurisés et vous permettent de créer vos propres requetes SQL.
 
 Exemple:
 
-`SELECT * FROM Users WHERE UserId = 105;` < Ne sélectionne que l'utilisateur voulu
-`SELECT * FROM Users WHERE UserId = 105 OR 1=1;` < Sélectionne tous les utilisateurs!
+> - `SELECT * FROM Users WHERE UserId = 105;` Ne sélectionne que l'utilisateur voulu
+> - `SELECT * FROM Users WHERE UserId = 105 OR 1=1;` Sélectionne tous les utilisateurs!
 
-. . . 
+## SQLi - Blind
 
 Il y a plusieurs types d'exploitation de SQLi: 
 
@@ -233,7 +240,7 @@ la requete!
 
 > - `pg_sleep()` est votre ami
 
-. . . 
+## SQLi - OSCP
 
 Dans la vrai vie on ne fait quasiment jamais de SQLi a la main, on utilise
 quasiment tout le temps `sqlmap`.
@@ -257,9 +264,18 @@ serveur web a `https://esgi.fr/notes?get=admin.cgi` vous pouvez essayer
 `https://esgi.fr/notes?get=../../../../etc/passwd` pour voir le fichier
 `/etc/passwd` si dans un serveur linux.
 
-## Cookies fixation
+## SSRF
 
+Principalement la meme que les LFI, juste via le réseau, utile pour pivoter dans
+un intranet ou en localhost
 
+## Cookies
+
+> - Des données stockées du coté du navigateur qui modifient votre expérience
+> - Généralement impossible a forger, il y a un secret du coté du serveur
+> - ...mais ce n'est pas toujours le cas :D
+> - JWT^[JSON Web Tokens, <https://jwt.io>] est l'enfer sur terre cryptographiquement parlant, si
+>   vous en voyez vous pouvez chercher des erreurs
 
 
 ## Enumeration
@@ -269,3 +285,15 @@ cependant plusieurs autres techniques:
 
 > - `dirsearch` ou autre pour trouver des pages web
 > - `wfuzz` pour trouver des paramètres, eg dans GET ou POST
+> - `nmap` pour trouver les ports ouverts de la machine, on verra ça plus tard
+> - `crt.sh` pour trouver tous les certificats TLS d'un site web^[Sauf intranet/self-signed] et donc ses
+>   noms de domaines, cherchez `*.domaine.com`!
+
+## Pratique
+
+Bon c'était un peu lourd a digérer tout ça non? N'hésitez pas si vous avez des
+questions!
+
+. . .
+
+Il est temps de pratiquer! <https://ctf.hacker101.com/>
