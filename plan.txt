@@ -1,0 +1,4 @@
+1 - slides, sniff de trames réseaux https://witestlab.poly.edu/blog/802-11-wireless-lan-2/
+2 - ARP spoofing avec ettercap, comprendre les problèmes des open wifi
+3 - crack de WEP, WPA TKIP, WPS
+4 - setup RADIUS avec WPA EAP2 ( exam?)

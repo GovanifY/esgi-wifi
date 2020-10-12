@@ -6,288 +6,164 @@ theme: metropolis
 
 # Plan/déroulé du cours
 
-## Pourquoi l'OSCP  
+## Pourquoi étudier le Wi-Fi 
 
+> - Utilisé absolument partout.
+> - J'ai besoin d'en dire plus?
 
-> - Certification de relativement bon niveau
-> - La certification la plus connue d'Offensive Security (les créateurs de Kali Linux)
-> - Pas une cert "bullshit" a la CISSP, CEH 
-> - Introduit pas mal de concepts vu et revu dans le monde réel
-> - Problèmes plutot actuels
+## Exemple
 
-## Exemples 
-
-![Hacking Team](./images/hacked_team.png)
-
-## Exemples 
-
-![Gigaleak](./images/gigaleak.png)
-
-## Exemples
-
-> - Bon, vous avez compris l'idée
+![Harvard Tor](./images/harvard_wifi.png)^[Plus lié aux logs qu'a la sécurité Wi-fi mais vous avez compris l'idée :p]
 
 ## Objectifs
 
-> - Savoir analyser l'infrastructure d'un réseau, trouver les points faibles.
-> - Savoir faire du pentest web afin d'avoir une porte d'entrée plausible sur des serveurs.
-> - Savoir faire de l'énumération afin de pouvoir faire une Elévation de privilèges.
-> - Comprendre les configurations des AD et trouver les problèmes potentiels.
-> - Savoir exfiltrer des données sans laisser trop de traces.
-
-## Objectifs - suite
-
-> - En sécurité on a 3 "principaux" domaines: l'exploit, le pentest et la défense.
-> - L'exploit c'est trouver des bugs dans des programmes, eg des CVEs.
-> - Le pentest c'est trouver des erreurs d'organisation dans des infras.
-> - La défense c'est un peu un fourre tout dans ce cas la, en gros éviter les erreurs d'orgas et/ou de bugs^[<https://rust-lang.org/>] en amont ou sur le tas
-> - Ici on s'intéresse au pentest.
+> - Comprendre les frames Wi-Fi a bas niveau.
+> - Problèmes de sécurité liés aux réseaux Wi-Fi ouverts.
+> - Attaquer un réseau en interne.
+> - Historique des failles WEP etc.
+> - Setup d'un serveur d'authentification Wi-Fi type eduroam.
 
 ## Modalités de notation
 
-> - Un serveur a infiltrer en groupe avec un rapport a rendre pendant les dernières heures de cours. 
+> - A voir 
 
 ## Matériel nécessaire
 
-> - Préférable: Une VM Kali Linux afin d'éviter les temps de compilations des inévitables gentoo-istes.
-> - Agréable: un OS avec un noyau Linux ^[Non, WSL1, ça compte pas trop :P. WSL2 ça peut avoir ses bugs.]
-> - En vrac: `nmap`, `owasp-zap`/`Burp Suite`, `firefox`, `gobuster`/`dirsearch`, `BlueHound`, `sqlmap`,`hashcat` et plus encore.
-
-
-## Où trouver les ressources ?
-
-> - Le discord du cours, que je vais de ce pas vous donner.
-> - Le lien du cours pour toutes les slides/ressources qu'on a vu en cours: <https://code.govanify.com/govanify/esgi-oscp>.
-> - Les listes awesome ctf/security sur GitHub et lire beaucoup de writeups :D
-
-## Plan du cours
-
-> - Introduction au Pentest web
-> - Introduction a l'exploit binaire/reverse et au reverse engineering^[<https://code.govanify.com/govanify/esgi-re/>]
-> - Introduction a l'Elevation de privilèges et a la configurations de serveurs + AD
-> - Beaucoup de pratique :)
-
-
-# Le Pentest web
-
-Je ne sais connais malheureusement pas votre niveau ou vos connaissances en web
-donc on va devoir repartir depuis le début
-
-## Architecture d'une page web
-
-> - De l'HTML qui contient le "coeur" du document
-> - Du CSS qui mets en page l'HTML 
-> - L'HTTP, le protocole de communication avec des serveurs web
-> - JavaScript qui permets de modifier l'HTML et le CSS et de communiquer avec des serveurs
-
-## Verbes HTTP
-
-> - GET, obtenir une ressource
-> - HEAD, meme chose que GET, mais sans la ressource, probablement inutile pour nous
-> - POST, envoyer une ressource
-> - PUT, remplace une ressource 
-> - DELETE, supprimer une ressource
-> - CONNECT, pour se connecter a un tunnel, probablement inutile pour nous 
-> - OPTIONS, pour savoir quels verbes sont supportés 
-> - TRACE, renvois la ressource envoyée
-> - PATCH, pour modifier une ressource
-
-## Verbes HTTP - Exemples
-
-Bon, tout ça c'est un peu abstrait, voici ce que ça donne dans la réalité:
+> - Nécessaire: Une machine sur Linux. Non WSL ne compte pas. Vraiment. 
+>   VMs ok si votre antenne Wi-Fi n'est pas utilisé par votre host, ce qui est
+>   délicat.
+> - Préférable: Un routeur que vous pourrez modifier. Pas grave si vous vous
+>   déconnectez du Teams :). Si vous êtes chez vos parents votre téléphone en
+>   point d'accès pourra suffir pour certaines parties.
+> - Préférable: Deux ordinateurs pouvant se connecter a votre Wi-Fi. 
 
 . . .
 
-```
-GET / HTTP/2
-Host: govanify.com
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-Accept-Language: en-US,en;q=0.5
-Accept-Encoding: gzip, deflate, br
+Et oui, les cours en distanciel sur le Wi-Fi c'est pas la joie.
 
-PAYLOAD
-```
+## Le Wi-Fi c'est quoi
 
-## Verbes HTTP - Exemples réponse
+> - Déjà <https://lawifi.fr>
+> - Une marque
+> - C'est tout
+> - Non, sérieusement, c'est tout
 
-```
-HTTP/2 200 OK
-date: Mon, 07 Sep 2020 10:53:27 GMT
-server: Apache
-strict-transport-security: max-age=63072000; includeSubdomains;
-last-modified: Thu, 03 Sep 2020 08:03:01 GMT
-etag: "260b-5ae642e64b90a-gzip"
-accept-ranges: bytes
+## 802.11 c'est quoi
 
-PAYLOAD
-```
+> - Un standard définissant de la communication par des ondes sur un champ électromagnétique 
 
-
-## Verbes HTTP - Nota Bene 
-
-Le protocole HTTP est un format en clair, vous pouvez envoyer vos propres
-requetes avec telnet. Attention cependant, HTTP/2 compresse vos requetes et le
-protocole HTTP/TLS (aussi appellé HTTPS) n'est lui, pas en clair!
+Imaginez un bouchon de liège flottant sur de l'eau. Plus vous le faites tourner
+plus il va créer de vagues. Ces vagues peuvent quand a elle faire boucher un
+autre bouchon de liège.
 
 . . .
 
-Il est possible d'envoyer des ressources par le verbe GET, par exemple
-`https://esgi.fr/admin?note=20&mdp=kamal`
+Vous venez de créer une antenne émettrice et réceptrice :)^[Pour plus de détails
+se réferrer a "Feynman Lectures on Physics"]
 
-## L'HTML
+## 802.11x c'est quoi
 
-Les ressources du protocole HTTP sont souvent au format HTML. Je ne vais pas
-expliquer l'HTML ici vraiment, donc pour ceux qui ne savent pas ce que c'est
-clic droit sur firefox, inspecter l'élément ou demandez moi de l'aide après les
-slides! Sinon en gros c'est un format d'organisation textuelle par balise genre
-`<h1>test</h1>`
+> - Une famille de standard définissant comment le protocole et le niveau
+>   physique
+> - Les plus connus: a, b, g, n, ac
+> - Transmission des données par modulations, maintenant du MIMO-OFDM^[Multiple Input Multiple Output Orthogonal Frequency Division Multiplexing]
 
-## Le CSS & JavaScript
+## Frame 802.11 
 
-En gros meme chose que l'HTML mais pour la mise en page de l'html, 
-eg: `.c{color:#747369}` mets le tag de classe c avec la couleur RGB en hex.
+![Frame 802.11](./images/802.11_frame.png)
 
-. . .
+## Frame Control 802.11 
 
-Le JavaScript quand a lui est un langage de programmation de typage faible qui
-peux faire des appels réseaux et modifier le CSS ou l'HTML.
+![Frame Control 802.11](./images/802.11_Frame_Control.png)
 
-## Les cookies
+> - On va revoir tout ça plus en détail juste après
 
-Il s'agit de données personelles, généralement stockant avec quel compte vous
-etes connecté etc. C'est sauvegardé du coté client et est envoyé lors de
-requetes HTTP.
+# Cryptographie du Wi-Fi
 
-## Problème de sécurité commun de structure
+## WEP kézako
 
-En connaissant juste les bases on peux déjà introduire 2 problèmes de sécurité
-majeurs qui arrivent de temps a autre:
+> - Un algorithme de cryptographie pour protéger les trames^[trames = frames mais en français] réseaux.
+> - Pourquoi?
+> - Qui dis sans fil dis interception de donnée transparente possible.
+> - Sans encryption, le routeur ne peux pas différencier une machine d'une autre
+>   et envois la trame partout pour espérer que la machine la reçoive.
 
-. . .
+## WEP kézako - édition USA
 
-Les serveurs gérant mal certains verbes HTTP et vous donnant un accès non
-voulu a des ressources, eg si un serveur ne vous autorise pas a obtenir des
-ressources via GET mais vous les renvois avec un POST.
+> - Un TRES mauvais algorithme d'encryption. 
+> - Utilise RC4, connu comme étant pété au delà du possible.
+> - Clé de 64bits: 40bits fixes (la clé de votre routeur en ASCII) et 24 pour l'IV.
+> - La clé ne dois JAMAIS se répéter dû à l'implémentation du RC4 en stream cipher.
+> - Il nous suffit de bruteforcer 24bits pour avoir une Related Key Attack, soit
+>   ~5000 connections.
 
-. . .
+## WEP kézako - édition USA - Suite
 
-Les commentaires! Trop souvent dans du code de production vous verrez des
-commentaires vers une interface admin, certaine fois avec des données sensibles.
+> - POURQUOI 64 BITS???
+> - Loi cryptographie USA blabla terrorisme.
+> - Eventuellement passé a du 128bits en grande partie.
+> - Le RC4 est cependant toujours pété.
 
-. . .
+## Attaque FMS
 
-Il s'agit plus d'énumération, mais le fichier robots.txt a la racine d'un site
-web peux vous apprendre pas mal de choses
+L'attaque Fluhrer, Mantin et Shamir (FMS) nous permets de deviner le prochain
+byte de la clée si on connais le premier byte du keystream et cleartext. Sachant que le
+premier byte du paquet est quasiment toujours 0xAA alors 0xAA $\oplus$ K pour K le
+premier byte encrypté vous donne le premier byte du keystream. A partir de la,
+avec un IV spécifique on peux deviner les valeurs de la Sbox^[Substitution Box]
+en effectuant nous même l'encryption avec le cleartext deviné, cassant la
+confusion^[<https://en.wikipedia.org/wiki/Confusion_and_diffusion>] de
+l'algorithme, nous donnant par causalité le byte suivant de la clé.
 
-## Outils
 
-Plusieurs outils sont préconisés pour le pentest web:
+## WPA kézako
 
-> - Firefox devtools quand on a la flemme d'avoir une série d'outils complète, plutot pas mal
-> - Burp Suite ou OWASP Zap selon les préférences^[En gros c'est la meme chose que devtools mais avec un historique, du scripting, etc, c'est un proxy]
-
-## XSS
-
-L'HTML est un langage de tags. On peux rajouter du texte utilisateur dans de
-l'HTML, eg pour dire votre nom d'utilisateur. Que se passe-t-il si ce texte
-continent de l'HTML?
-
-. . . 
-
-Si l'HTML n'est pas filtré, vous pouvez remplacer des parties de la page web par
-du contenu que vous controlez, ce qui contient du javascript. Le javascript peux
-faire des requetes réseaux et a accès a vos données personelles. F.
+> - Bon ok WEP est mort et enterré.
+> - Faisons un autre algo!
+> - On va lui filer un joli nom aussi tiens, Temporal Key Integrity Protocol.
+> - ...en utilisant du RC4 comme backend.
 
 . . .
 
-Il y a 3 types de XSS:
+Sécurité: Wi-Fi Alliance / 20
 
-> - Reflected, ou l'utilisateur envois une requete avec de l'html et le serveur lui rajoute
-> - Stored, ou le serveur a stocké l'HTML dans une base de donnée et le renvois a l'utilisateur
-> - DOM, ou le javascript qui modifie votre page est vulnérable
+## WPA TKIP
 
-## XSS - OSCP
+Sensible a l'attaque chop-chop: on peux deviner la plupart des bytes grace a un
+Message Authentification Code utilisant un CRC32, clairement pas
+cryptographique. Si on peux deviner le plaintext on peux deviner le keystream,
+ce qui nous permets d'envoyer des paquets de la même taille que ceux crackés.
+Sauf que le RC4 est vraiment pas un bon algo de cryptographie, donc l'attaque de
+Klein nous permets de retrouver la clé depuis le keystream.
 
-Dans le cadre de l'OSCP c'est un peu moins utile que d'autres techniques vu
-qu'il faut simuler la présence d'un utilisateur mais reste des bases très
-utiles!
+## WPA2
 
-## SQL Injection
-
-Les bases de données utilise TRES majoritairement un langage appellé SQL. La
-majorité des exemples de code en ligne pour obtenir des données depuis du SQL ne
-sont pas sécurisés et vous permettent de créer vos propres requetes SQL.
-
-. . . 
-
-Exemple:
-
-> - `SELECT * FROM Users WHERE UserId = 105;` Ne sélectionne que l'utilisateur voulu
-> - `SELECT * FROM Users WHERE UserId = 105 OR 1=1;` Sélectionne tous les utilisateurs!
-
-## SQLi - Blind
-
-Il y a plusieurs types d'exploitation de SQLi: 
-
-> - SQLi avec réponse: vous avez vos résultats dans votre réponse
-> - Blind SQLi: vous savez juste si votre requete a échouée ou non(et parfois meme pas!)
-
-. . .
-
-Le blind SQLi peux cependant etre exploité... en analysant le temps que prends
-la requete!
-
-> - `pg_sleep()` est votre ami
-
-## SQLi - OSCP
-
-Dans la vrai vie on ne fait quasiment jamais de SQLi a la main, on utilise
-quasiment tout le temps `sqlmap`.
-
-La vraie vie n'est cependant pas l'OSCP et ils ont bien décidé de vous em\*\*\*\*er
+> - Enfin une crypto solide! 
+> - CCMP: AES CTR + CBC-MAC
+> - Loin d'être parfait, toujours pas de Forward Secrecy :/^[WPA3 règle ça mais
+>   on l'aura pas avant encore 10 ans]
+> - RNG toujours pas sécurisé.
+> - WPS qui est crackable en quelques heures.
+> - KRACK peux nous permettre de déduire le nonce^[N'hésitez pas si vous avez
+>   des questions!]
+> - #!%&!!!
 
 
-## File Upload 
+## WPA2 EAP Enterprise
 
-Il est possible d'abuser d'un système d'upload de fichiers de plusieurs façons:
+> - Avoir une seule clé pour un réseau Wi-Fi d'entreprise c'est compliqué.
+> - Si la clé leak, on dois redonner la clé a tout le monde.
+> - Extensible Authentication Protocol a la rescousse pour palier a ce problème!
+> - Un serveur d'authentification va donner au routeur une clée d'encryption
+>   unique a votre appareil si l'authentification est vérifiée. 
 
-> - Il vous laisse uploader un fichier php avec les droits d'exécution, trouver ou il est sur le serveur, faites un GET et il est exécuté
-> - Vous pouvez camoufler un fichier d'un type en un autre en modifiant son type `MIME`
-> - Il est possible d'exploiter un bug de parsing de fichier, eg dans ImageMagick
+## WPA2 EAP Enterprise - Suite
 
-## Local File Inclusion
-
-Si votre page web charge des fichiers locaux a afficher il est possible d'abuser
-de ça pour afficher des fichiers sensibles. Par exemple imaginons que votre
-serveur web a `https://esgi.fr/notes?get=admin.cgi` vous pouvez essayer
-`https://esgi.fr/notes?get=../../../../etc/passwd` pour voir le fichier
-`/etc/passwd` si dans un serveur linux.
-
-## SSRF
-
-Principalement la meme que les LFI, juste via le réseau, utile pour pivoter dans
-un intranet ou en localhost
-
-## Cookies
-
-> - Des données stockées du coté du navigateur qui modifient votre expérience
-> - Généralement impossible a forger, il y a un secret du coté du serveur
-> - ...mais ce n'est pas toujours le cas :D
-> - JWT^[JSON Web Tokens, <https://jwt.io>] est l'enfer sur terre cryptographiquement parlant, si
->   vous en voyez vous pouvez chercher des erreurs
-
-
-## Enumeration
-
-Comme dis précédemment on peux découvrir des pages avec robots.txt. Il y a
-cependant plusieurs autres techniques:
-
-> - `dirsearch` ou autre pour trouver des pages web
-> - `wfuzz` pour trouver des paramètres, eg dans GET ou POST
-> - `nmap` pour trouver les ports ouverts de la machine, on verra ça plus tard
-> - `crt.sh` pour trouver tous les certificats TLS d'un site web^[Sauf intranet/self-signed] et donc ses
->   noms de domaines, cherchez `*.domaine.com`!
+> - EAP-TLS: Authentification WiFi par certificat TLS client et serveurs. ^[Galère à cause du déploiement PKI conséquent.]
+> - EAP-TTLS: Amélioration d'EAP-TLS pour ne requérir que des certifcats côté serveurs. ^[Ça utilise un tunnel sur le côté chiffré pour communiquer et du WEP dynamiquement, par utilisateur et session.]
+> - PEAP: Une amélioration des vieux protocoles qui fonctionne avec des techniques similaires à EAP-TTLS.
+> - EAP-SIM: Cela utilise le module SIM pour calculer des clefs WEP dynamique de session. ^[Utilisé par FreeWifi-secure!]
+> - EAP-AKA: Comme EAP-SIM, mais version USIM/UMTS, une variante.
 
 ## Pratique
 
@@ -296,4 +172,4 @@ questions!
 
 . . .
 
-Il est temps de pratiquer! <https://ctf.hacker101.com/>
+Il est temps de passer a de la pratique! On va sniffer des réseaux Wi-Fi :)
