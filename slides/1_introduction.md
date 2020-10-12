@@ -1,5 +1,5 @@
 ---
-title: Préparation a la certification OSCP
+title: Sécurité des réseaux Wi-Fi
 author: \textsc{Gauvain Roussel-Tarbouriech}, gauvain@govanify.com
 theme: metropolis
 ---
