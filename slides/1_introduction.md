@@ -41,6 +41,14 @@ theme: metropolis
 
 Et oui, les cours en distanciel sur le Wi-Fi c'est pas la joie.
 
+
+## Où trouver les ressources ?
+
+> - Le discord du cours, que je vais de ce pas vous donner.
+> - Le lien du cours pour toutes les slides/ressources qu'on a vu en cours: <https://code.govanify.com/govanify/esgi-wifi>.
+
+# Le Wi-Fi
+
 ## Le Wi-Fi c'est quoi
 
 > - Déjà <https://lawifi.fr>
