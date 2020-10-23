@@ -1,3 +1,3 @@
 # esgi-oscp
 
-Préparation a la certification OSCP a l'ESGI - Cours de M2
+Sécurité des réseaux Wi-Fi a l'ESGI - Cours de L3
